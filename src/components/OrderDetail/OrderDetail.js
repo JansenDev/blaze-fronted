@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom"; 
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setSelectOrder } from "../../redux/actions/orderActions";
@@ -11,11 +11,45 @@ function formatDate(date) {
 }
 
 function OrderDetail() {
+  const [formOrderItem, setFormOrderItem] = useState({name:'',
+quantity:'',
+unitPrice:''
+});
   const idOrderPath = useParams("idOrder").idOrder;
   console.log(idOrderPath);
   const dispatch = useDispatch();
 
+// !HANDLECHANGE
+  const handleChangeFormOrderItem = async(e)=>{
+    e.preventDefault();
+    console.log(e);
+    await setFormOrderItem(
+      {
+        ...formOrderItem,
+      [e.target.name] : e.target.value
+    }
+    )
+  }
+  console.log(formOrderItem);
+
+  // !SERVICE
+
+  const insertNewOrdenItem= async(e)=>{
+    e.preventDefault();
+    console.log(formOrderItem);
+    const data = await axios({
+      method:'post',
+      url:`http://localhost:8080/orders/`,
+      data:formOrderItem
+    })
+
+    console.log(data);
+  }
+
+
   const getOrderById = async () => {
+
+
     const datos = await axios
       .get(`http://localhost:8080/orders/${idOrderPath}`)
       .catch((err) => {
@@ -193,38 +227,38 @@ function OrderDetail() {
       </table>
 
       <div className="mb-5">
-        <a class="btn btn-success" href="#" role="button">
+        <a className="btn btn-success" href="#" role="button">
           Complete Order
         </a>
-        <a class="btn btn-danger" href="#" role="button">
+        <a className="btn btn-danger" href="#" role="button">
           Reject Order
         </a>
       </div>
 
       <div>
-        <form>
-          <table class="table table-bordered my-5">
+        <form onSubmit={insertNewOrdenItem}>
+          <table className="table table-bordered my-5">
             <thead>
               <tr>
-                <th colspan="3">New Product</th>
+                <th colSpan="3">New Product</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td scope="row">Name</td>
-                <td><input name="" id="" class="form-control" type="text" value="" placeholder="Name"/></td>
+                <td><input name="name" id="" className="form-control" type="text" value={formOrderItem.name} placeholder="Name" onChange={handleChangeFormOrderItem} /></td>
               </tr>
               <tr>
                 <td scope="row">Quantity</td>
-                <td><input name="" id="" class="form-control" type="number" value="" placeholder="Quantity"/></td>
+                <td><input name="quantity" id="" className="form-control" type="number" value={formOrderItem.quantity} placeholder="Quantity"  onChange={handleChangeFormOrderItem}/></td>
               </tr>
               <tr>
                 <td scope="row">Unit Price</td>
-                <td><input name="" id="" class="form-control" type="number" value="" placeholder="Unit Price"/></td>
+                <td><input name="unitPrice" id="" className="form-control" type="number" value={formOrderItem.unitPrice} placeholder="Unit Price"  onChange={handleChangeFormOrderItem}/></td>
               </tr>
             </tbody>
           </table>
-          <a name="" id="" class="btn btn-primary btn-block" href="#" role="button">Add Item+</a>
+          <button className="btn btn-primary btn-block" type="submit">Add Item+</button>
         </form>
       </div>
     </div>
