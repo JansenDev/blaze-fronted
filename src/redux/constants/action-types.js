@@ -1,0 +1,5 @@
+export const ActionTypes = {
+    SET_ORDER : "SET_ORDER",
+    SELECTED_ORDER: "SELECTED_ORDER",
+    REMOVE_SELECT_ORDER:"REMOVE_SELECT_ORDER"
+}
