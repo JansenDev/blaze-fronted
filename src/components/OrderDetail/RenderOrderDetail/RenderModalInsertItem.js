@@ -5,6 +5,9 @@ import { setSelectOrder } from "../../../redux/actions/orderActions";
 // *local imports
 import { updateOrder } from "../../../service/OrderService";
 
+// *utils
+import Swal from "sweetalert2";
+
 function RenderModalInsertItem() {
   const dispatch = useDispatch();
   const orderFormBody = useSelector((state) => state.orderById);
@@ -23,12 +26,23 @@ function RenderModalInsertItem() {
 
   const insertNewOrdenItem = async (e) => {
     e.preventDefault();
+    
+    if(formOrderItem.name == "" || formOrderItem.quantity == "" || formOrderItem.unit_price == ""){
+      Swal.fire({
+        position: 'center',
+        icon: 'info',
+        title: 'Empty fields',
+        showConfirmButton: false,
+        timer: 1500
+      })
+      return ;
+    }
+
     orderFormItem.push(formOrderItem);
     dispatch(setSelectOrder(orderFormBody));
     
     const data = await updateOrder(orderFormBody);
     cleanModalFiles();
-    console.log(data);
   };
 
   const cleanModalFiles=()=>{
@@ -92,7 +106,7 @@ function RenderModalInsertItem() {
           </tbody>
         </table>
         <button className="btn btn-primary btn-block mb-5" type="submit">
-          Add Item+
+          + New Item
         </button>
       </form>
     </div>
