@@ -1,21 +1,18 @@
 import React, { useState } from "react";
-import  axios  from "axios";
-
+// *Redux
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectOrder } from "../../../redux/actions/orderActions";
+// *local imports
+import { updateOrder } from "../../../service/OrderService";
 
 function RenderModalInsertItem() {
   const dispatch = useDispatch();
   const orderFormBody = useSelector((state) => state.orderById);
-  const orderFormItem = orderFormBody.listOrdersItems
+  const orderFormItem = orderFormBody.listOrdersItems;
 
-  const [formOrderItem, setFormOrderItem] = useState({
-    name: "",
-    quantity: "",
-    unit_price: "",
-  });
+  const [formOrderItem, setFormOrderItem] = useState(orderItemTemplateFormat());
 
-  // !SEGMENT HANDLECHANGE
+  // !functions
   const handleChangeFormOrderItem = async (e) => {
     e.preventDefault();
     setFormOrderItem({
@@ -24,23 +21,20 @@ function RenderModalInsertItem() {
     });
   };
 
-  // !SEGMENT SERVICE
-
   const insertNewOrdenItem = async (e) => {
     e.preventDefault();
-        orderFormItem.push(formOrderItem);
-        dispatch(setSelectOrder(orderFormBody));
-        console.log(typeof(orderFormBody));
-    const data = await axios({
-      method: "put",
-      url: `http://localhost:8080/orders/`,
-      data: orderFormBody,
-    });
-
-    // const data2 = axios.put(`http://localhost:8080/orders/`, orderFormBody);
-
+    orderFormItem.push(formOrderItem);
+    dispatch(setSelectOrder(orderFormBody));
+    
+    const data = await updateOrder(orderFormBody);
+    cleanModalFiles();
     console.log(data);
   };
+
+  const cleanModalFiles=()=>{
+    setFormOrderItem(orderItemTemplateFormat());
+  }
+  
 
   return (
     <div>
@@ -97,12 +91,21 @@ function RenderModalInsertItem() {
             </tr>
           </tbody>
         </table>
-        <button className="btn btn-primary btn-block" type="submit">
+        <button className="btn btn-primary btn-block mb-5" type="submit">
           Add Item+
         </button>
       </form>
     </div>
   );
 }
+
+const orderItemTemplateFormat = () => {
+  return {
+    name: "",
+    quantity: "",
+    unit_price: "",
+  };
+};
+
 
 export default RenderModalInsertItem;

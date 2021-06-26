@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setSelectOrder } from "../../redux/actions/orderActions";
-import  RenderOrderDetail  from "./RenderOrderDetail/RenderOrder";
+import  RenderOrder  from "./RenderOrderDetail/RenderOrder";
 
 
 function OrderDetail () {
@@ -27,7 +27,7 @@ function OrderDetail () {
     }
 }, [idOrder])
 
-  return  ( <RenderOrderDetail /> )
+  return  ( <RenderOrder /> )
 }
 
 export default OrderDetail;

@@ -1,37 +1,51 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { formatDate } from "../../../utils/utils";
-
+// *redux
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+// *local imports
+import { setSelectOrder } from "../../../redux/actions/orderActions";
 import RenderModalInsertItem from "./RenderModalInsertItem";
+import RenderOrderTaxes from "./RenderOrderTaxes";
+import { updateOrder } from "../../../service/OrderService";
+// *utils lib
+import Swal from "sweetalert2";
+import { functions } from "lodash-es";
 
 function RenderOrder() {
-  const orderById2 = useSelector((state) => state.orderById);
-  console.log(orderById2);
+  const dispatch = useDispatch();
+
+  const [totalPriceOrderAllItems, setTotalPriceOrderAllItems] = useState(0)
+  const orderById = useSelector((state) => state.orderById);
+  const orderItems = orderById.listOrdersItems;
+  console.log(orderById);
   const {
-    order_number="",
-    date="",
-    customer="",
-    status="",
+    order_number = "",
+    date = "",
+    customer = "",
+    status = "",
     listOrdersItems = [],
-    taxes_amounts={},
-    taxes_total=0,
-    total_amount=0,
-  } = orderById2;
+    taxes_amounts = {},
+    taxes_total = 0,
+    total_amount = 0,
+  } = orderById;
 
-  const { city_tax, country_tax, state_tax,federal_tax } = taxes_amounts
+  const { city_tax, country_tax, state_tax, federal_tax } = taxes_amounts;
 
-  const dateFormated = formatDate(date.substr(0,10));
+  const dateFormated = formatDate(date.substr(0, 10));
 
-  const arrrayItems = listOrdersItems
+  const arrrayItems = listOrdersItems;
 
-  let totalPriceOrderItems = 0;
-  const renderOrderItemsList = arrrayItems.map((order, index) => {
+    let totalPriceOrderItems = 0;
+// !functions
+    const renderOrderItemsList = arrrayItems.map((order, index) => {
+
     const { name, quantity, unit_price } = order;
     const priceOrderItem = quantity * unit_price;
     totalPriceOrderItems = totalPriceOrderItems + priceOrderItem;
+    // setTotalPriceOrderAllItems(totalPriceOrderItems);
     return (
-      // <></>
       <tr key={index}>
         <td>{index + 1}</td>
         <td>{name}</td>
@@ -42,13 +56,48 @@ function RenderOrder() {
           <a href="#" role="button">
             Edit
           </a>
-          <a href="#" role="button">
+          <a onClick={() => deleteOrderItem(name)} role="button">
             Delete
           </a>
         </td>
       </tr>
     );
   });
+
+      const deleteOrderItem = async (nameItem) => {
+        const newListOrdersItem = listOrdersItems.filter(
+          (orderItem) => orderItem.name != nameItem
+        );
+        orderById.listOrdersItems = newListOrdersItem;
+  
+        Swal.fire({
+          title: `Do you want to delete the Item: ${nameItem}?`,
+          showDenyButton: true,
+          showCancelButton: false,
+          confirmButtonText: `Cancel`,
+          denyButtonText: `Delete`,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Swal.fire('Saved!', '', 'success')
+          } else if (result.isDenied) {
+            dispatch(setSelectOrder(orderById));
+            updateOrder(orderById);
+          }
+        });
+      };
+  
+
+    const btnCompleteOrder=()=>{
+      orderById.status = "Completed";
+      dispatch(setSelectOrder(orderById));
+      updateOrder(orderById);
+
+    }
+    const btnRejectOrder=()=>{
+      orderById.status = "Reject";
+      dispatch(setSelectOrder(orderById));
+      updateOrder(orderById);
+    }
 
   return (
     <div>
@@ -102,6 +151,9 @@ function RenderOrder() {
       >
         Add Item+
       </a>
+    
+  {/* <RenderOrderTaxes /> */}
+
 
       <table className="table table-borderless table-sm">
         <tbody>
@@ -162,20 +214,20 @@ function RenderOrder() {
         </tbody>
       </table>
 
+
       <div className="mb-5">
-        <a className="btn btn-success" href="#" role="button">
+        <a onClick={btnCompleteOrder} className="btn btn-success"  role="button">
           Complete Order
         </a>
-        <a className="btn btn-danger" href="#" role="button">
+        <a onClick={btnRejectOrder} className="btn btn-danger" role="button">
           Reject Order
         </a>
       </div>
 
       <div>
-        < RenderModalInsertItem />
+        <RenderModalInsertItem />
       </div>
     </div>
-    
   );
 }
 
