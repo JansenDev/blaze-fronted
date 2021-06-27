@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 // *Redux
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectOrder } from "../../../redux/actions/orderActions";
+import {
+  setSelectOrder,
+  setHandlerFormItem,
+} from "../../../redux/actions/orderActions";
 // *local imports
 import { updateOrder } from "../../../service/OrderService";
 
@@ -10,53 +13,128 @@ import Swal from "sweetalert2";
 
 function RenderModalInsertItem() {
   const dispatch = useDispatch();
-  const orderFormBody = useSelector((state) => state.orderById);
-  const orderFormItem = orderFormBody.listOrdersItems;
+  let formOrderBody = useSelector((state) => state.orderById);
+  let listOrderItems = formOrderBody.listOrdersItems;
+  const modalManageType = useSelector((state) => state.modalAction.action);
+  const idOrderItem = useSelector((state) => state.modalAction.idItem);
+  const handlerFormItem = useSelector((state) => state.modalHandler);
 
-  const [formOrderItem, setFormOrderItem] = useState(orderItemTemplateFormat());
+  // const [handlerFormItem, setHandlerFormItem] = useState(orderItemTemplateFormat());
 
   // !functions
   const handleChangeFormOrderItem = async (e) => {
     e.preventDefault();
-    setFormOrderItem({
-      ...formOrderItem,
-      [e.target.name]: e.target.value,
-    });
+
+    dispatch(
+      setHandlerFormItem({
+        ...handlerFormItem,
+        [e.target.name]: e.target.value,
+      })
+    );
+
+    // setHandlerFormItem({
+    //   ...handlerFormItem,
+    //   [e.target.name]: e.target.value,
+    // });
   };
 
-  const insertNewOrdenItem = async (e) => {
+  const insertNewOrderItem = async (e) => {
     e.preventDefault();
     
-    if(formOrderItem.name == "" || formOrderItem.quantity == "" || formOrderItem.unit_price == ""){
+    if (
+      handlerFormItem.name == "" ||
+      handlerFormItem.quantity == "" ||
+      handlerFormItem.unit_price == ""
+    ) {
       Swal.fire({
-        position: 'center',
-        icon: 'info',
-        title: 'Empty fields',
+        position: "center",
+        icon: "info",
+        title: "Empty fields",
         showConfirmButton: false,
-        timer: 1500
-      })
-      return ;
+        timer: 1500,
+      });
+      return;
+    }
+    for (let index = 0; index < listOrderItems.length; index++) {
+      if (listOrderItems[index].name == handlerFormItem.name) {
+        Swal.fire({
+          position: "center",
+          icon: "info",
+          title: "Item exists",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        return;
+      }
     }
 
-    orderFormItem.push(formOrderItem);
-    dispatch(setSelectOrder(orderFormBody));
-    
-    const data = await updateOrder(orderFormBody);
+    console.log(formOrderBody);
+
+    listOrderItems.push(handlerFormItem);
+    dispatch(setSelectOrder(formOrderBody));
+
+
+    const data = await updateOrder(formOrderBody);
     cleanModalFiles();
   };
 
-  const cleanModalFiles=()=>{
-    setFormOrderItem(orderItemTemplateFormat());
-  }
-  
+  const editOrderItem = async (e, idOrderItem) => {
+    e.preventDefault();
+    console.log(idOrderItem);
+    if (
+      handlerFormItem.name == "" ||
+      handlerFormItem.quantity == "" ||
+      handlerFormItem.unit_price == ""
+    ) {
+      Swal.fire({
+        position: "center",
+        icon: "info",
+        title: "Empty fields",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      return;
+    }
+    
 
+    const itemsCleaned = duplicateItemClean(idOrderItem);
+    itemsCleaned.push(handlerFormItem);
+    formOrderBody.listOrdersItems= itemsCleaned;
+
+    dispatch(setSelectOrder(formOrderBody));
+    const data = await updateOrder(formOrderBody);
+    cleanModalFiles();
+  };
+  const duplicateItemClean = (nameItem) => {
+    const itemListCleaned = listOrderItems.filter(
+      (item) => item.name != nameItem
+    );
+    return itemListCleaned;
+  };
+
+  const manageOrder = (e) => {
+    e.preventDefault();
+    if (modalManageType == "New") {
+      console.log("SUBMIT new");
+      insertNewOrderItem(e);
+    }
+
+    if (modalManageType == "Edit") {
+      console.log("SUBMIT edit");
+      editOrderItem(e, idOrderItem);
+    }
+  };
+
+  const cleanModalFiles = () => {
+    dispatch(setHandlerFormItem(orderItemTemplateFormat()));
+  };
   return (
     <div>
-      <form onSubmit={insertNewOrdenItem}>
+      <form onSubmit={manageOrder}>
         <table className="table table-bordered my-5">
           <thead>
             <tr className="text-center">
-              <th colSpan="3">New Product</th>
+              <th colSpan="3">{modalManageType} Item</th>
             </tr>
           </thead>
           <tbody>
@@ -68,7 +146,7 @@ function RenderModalInsertItem() {
                   id=""
                   className="form-control"
                   type="text"
-                  value={formOrderItem.name}
+                  value={handlerFormItem.name}
                   placeholder="Name"
                   onChange={handleChangeFormOrderItem}
                 />
@@ -82,7 +160,7 @@ function RenderModalInsertItem() {
                   id=""
                   className="form-control"
                   type="number"
-                  value={formOrderItem.quantity}
+                  value={handlerFormItem.quantity}
                   placeholder="Quantity"
                   onChange={handleChangeFormOrderItem}
                   min="1"
@@ -97,7 +175,7 @@ function RenderModalInsertItem() {
                   id=""
                   className="form-control"
                   type="text"
-                  value={formOrderItem.unit_price}
+                  value={handlerFormItem.unit_price}
                   placeholder="Unit Price"
                   onChange={handleChangeFormOrderItem}
                 />
@@ -106,7 +184,7 @@ function RenderModalInsertItem() {
           </tbody>
         </table>
         <button className="btn btn-primary btn-block mb-5" type="submit">
-          + New Item
+          Submit
         </button>
       </form>
     </div>
@@ -120,6 +198,5 @@ const orderItemTemplateFormat = () => {
     unit_price: "",
   };
 };
-
 
 export default RenderModalInsertItem;

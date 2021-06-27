@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 function RenderOrderTaxes() {
   const orderById = useSelector((state) => state.orderById);
-  console.log(orderById);
+//   console.log(orderById);
   const {
     listOrdersItems = [],
     taxes_amounts = {},

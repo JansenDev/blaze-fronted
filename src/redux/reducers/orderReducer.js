@@ -4,6 +4,17 @@ const initialState = {
   orders: [],
 };
 
+const modalInit = {
+  action:"New",
+  idItem: "",
+}
+
+const modalEditInit = {
+  name: "",
+  quantity: "",
+  unit_price: "",
+}
+
 export const orderReducer = (state = initialState, { type, payload }) => {
   switch (type) {
     case ActionTypes.SET_ORDER:
@@ -24,3 +35,23 @@ export const selectedOrderReducer = (state = {}, { type, payload })=>{
       return state
   }
 } ;
+
+export const modalManageOrder=(state = modalInit, { type, payload } )=>{
+  switch (type) {
+    case ActionTypes.MODAL_MANAGE_ORDER:
+      return { ...state, ...payload }
+  
+    default:
+      return state
+  }
+}
+
+export const handlerFormItem=(state = modalEditInit, { type, payload } )=>{
+  switch (type) {
+    case ActionTypes.HANDLER_FORM_ITEM:
+      return { ...state, ...payload }
+  
+    default:
+      return state
+  }
+}

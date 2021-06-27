@@ -1,9 +1,11 @@
 import { combineReducers} from "redux";
-import { orderReducer, selectedOrderReducer } from "./orderReducer";
+import { orderReducer, selectedOrderReducer, modalManageOrder, handlerFormItem } from "./orderReducer";
 
 const reducers = combineReducers({
     allOrders: orderReducer,
-    orderById: selectedOrderReducer 
+    orderById: selectedOrderReducer ,
+    modalAction: modalManageOrder,
+    modalHandler:handlerFormItem,
 });
 
 export default reducers;
