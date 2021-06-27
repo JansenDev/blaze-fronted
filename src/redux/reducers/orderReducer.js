@@ -7,6 +7,7 @@ const initialState = {
 const modalInit = {
   action:"New",
   idItem: "",
+  opened:false,
 }
 
 const modalEditInit = {

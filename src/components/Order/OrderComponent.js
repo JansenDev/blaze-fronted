@@ -1,11 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
-// ! redux
-import { useSelector, useDispatch } from "react-redux";
-// ! Componenets
-import { createOrder } from "../../service/OrderService";
-// ! utils
+import { Link, Redirect } from "react-router-dom";
+// * redux
+import { useDispatch, useSelector } from "react-redux";
+// * Componenets
+import { createOrder, getAllOrders } from "../../service/OrderService";
+// * utils
 import  Swal  from "sweetalert2";
+import { setOrder } from "../../redux/actions/orderActions";
 
 function formatDate(date){
     return date.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
@@ -14,7 +15,7 @@ function formatDate(date){
 const OrderComponent = () => {
   const storeAllOrders = useSelector((state) => state.allOrders.orders);
   const dispatch = useDispatch();
-  
+
   const renderOrderList = storeAllOrders.map((Order, index) => {
     const { order_number, status, date, customer, total_amount } = Order;
 
@@ -36,19 +37,6 @@ const OrderComponent = () => {
     );
   });
 
-  const newOrderTemplate = {
-    status: "Pending",
-    customer: "",
-    taxes_amounts: {
-      city_tax: 0.1,
-      country_tax: 0.05,
-      state_tax: 0.08,
-      federal_tax: 0.02
-    },
-    taxes_total: 0.0,
-    total_amount:0.0,
-    listOrdersItems: []
-  }
 
   const createNewOrder= ()=>{
     console.log("New Order Create");
@@ -77,8 +65,13 @@ const OrderComponent = () => {
       if (result.isConfirmed) {
         Swal.fire({
           title: `Order created!`,
-        })
+        });
+
         window.location.replace(window.location.href+`/${result.value.data.order_number}`);
+
+        // const response =  getAllOrders();
+        // dispatch(setOrder(response.data));
+        // return <Redirect  to={window.location.href+"/"+result.value.data.order_number} />
       }
     })
     .catch((err)=>console.log(err));
@@ -108,5 +101,19 @@ const OrderComponent = () => {
     </div>
   );
 };
+
+const newOrderTemplate = {
+  status: "Pending",
+  customer: "",
+  taxes_amounts: {
+    city_tax: 0.1,
+    country_tax: 0.05,
+    state_tax: 0.08,
+    federal_tax: 0.02
+  },
+  taxes_total: 0.0,
+  total_amount:0.0,
+  listOrdersItems: []
+}
 
 export default OrderComponent;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 // *redux
 import { useSelector } from "react-redux";
@@ -17,16 +17,10 @@ import Swal from "sweetalert2";
 import { formatDate } from "../../../utils/utils";
 
 
-
 function RenderOrder() {
-  const dispatch = useDispatch();
 
-  // const [totalPriceOrderAllItems, setTotalPriceOrderAllItems] = useState(0);
+  const dispatch = useDispatch();
   const orderById = useSelector((state) => state.orderById);
-  const manageAction = useSelector((state) => state);
-  console.log();
-  const orderItems = orderById.listOrdersItems;
-  // console.log(orderById);
   const {
     order_number = "",
     date = "",
@@ -34,23 +28,24 @@ function RenderOrder() {
     status = "",
     listOrdersItems = [],
     taxes_amounts = {},
-    taxes_total = 0,
-    total_amount = 0,
   } = orderById;
 
   const { city_tax, country_tax, state_tax, federal_tax } = taxes_amounts;
 
   const dateFormated = formatDate(date.substr(0, 10));
-
   const arrrayItems = listOrdersItems;
 
+  let auxTotal_taxes = 0;
+  let auxTotal_amount = 0;
   let totalPriceOrderItems = 0;
   // !functions
   const renderOrderItemsList = arrrayItems.map((order, index) => {
     const { name, quantity, unit_price } = order;
     const priceOrderItem = quantity * unit_price;
     totalPriceOrderItems = totalPriceOrderItems + priceOrderItem;
-    // setTotalPriceOrderAllItems(totalPriceOrderItems);
+
+    auxTotal_taxes = (totalPriceOrderItems*0.1)+(totalPriceOrderItems*0.05)+(totalPriceOrderItems*0.08)+(totalPriceOrderItems*0.02);
+    auxTotal_amount = totalPriceOrderItems + auxTotal_taxes;
 
     return (
       <tr key={index}>
@@ -72,27 +67,26 @@ function RenderOrder() {
   });
 
   const setModalEditOrderItem = async (nameItem) => {
-    const modalAction = {
+    const modalConfig = {
       action:"Edit",
-      idItem:nameItem
+      idItem:nameItem,
+      opened:true,
     }
 
-    const orderItemFiltered = arrrayItems.filter((item)=> item.name == nameItem)[0];
-    console.log(orderItemFiltered);
-    const modalFieldsItem =  orderItemFiltered 
+    const modalFieldsItem =  arrrayItems.filter((item)=> item.name == nameItem)[0]; 
 
     dispatch(setHandlerFormItem(modalFieldsItem));
-    dispatch(setModalOrder(modalAction));
+    dispatch(setModalOrder(modalConfig));
   };
 
   const setModalAddOrderItem = async () => {
+    const modalConfig = {
+      action:"New",
+      idItem:"",
+      opened:true,
+    }
 
-    dispatch(setModalOrder(
-      {
-        action:"New",
-        idItem:""
-      }
-      ));
+    dispatch(setModalOrder(modalConfig));
 
       
       dispatch(setHandlerFormItem({
@@ -236,7 +230,7 @@ function RenderOrder() {
               <h5>Total Taxes</h5>
             </td>
             <td>
-              <h5>$ {taxes_total.toFixed(2)}</h5>
+              <h5>$ {auxTotal_taxes.toFixed(2)}</h5>
             </td>
           </tr>
           <tr>
@@ -244,7 +238,7 @@ function RenderOrder() {
               <h5>Total</h5>
             </td>
             <td>
-              <h5>$ {total_amount.toFixed(2)}</h5>
+              <h5>$ {auxTotal_amount.toFixed(2)}</h5>
             </td>
           </tr>
         </tbody>

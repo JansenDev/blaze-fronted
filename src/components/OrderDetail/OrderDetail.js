@@ -1,27 +1,25 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+// *redux
 import { useDispatch } from "react-redux";
+// *Locals
 import { setSelectOrder } from "../../redux/actions/orderActions";
 import  RenderOrder  from "./RenderOrderDetail/RenderOrder";
+import { getOrderById } from "../../service/OrderService"
+
 
 
 function OrderDetail () {
   const  { idOrder }  = useParams();
   const dispatch = useDispatch();
-
-  // !segment get
-  const getOrderById = async () => {
-    const datos = await axios
-      .get(`http://localhost:8080/orders/${idOrder}`)
-      .catch((err) => {
-        console.log(err);
-      });
-    dispatch(setSelectOrder(datos.data));
+  
+  const OrderDetail = async () => {
+    const orderDetailResult = await getOrderById(idOrder);
+    dispatch(setSelectOrder(orderDetailResult.data));
   };
 
   useEffect(() => {
-    if (idOrder && idOrder != "")getOrderById();
+    if (idOrder && idOrder != "")OrderDetail();
     return () => {
     }
 }, [idOrder])

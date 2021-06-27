@@ -1,21 +1,17 @@
 import React, {useEffect} from 'react';
+// !redux
 import { useDispatch} from "react-redux";
-import axios from "axios";
+// !locals
 import { setOrder } from "../../redux/actions/orderActions";
-
 import OrderComponent from "./OrderComponent";  
+import { getAllOrders } from "../../service/OrderService";
 
 function Order() {
     const dispatch = useDispatch();
     //!segment functionality
     const fetchAllOrders = async () => {
-        const response = await axios.get("http://localhost:8080/orders/")
-        .catch((err)=>{
-            console.log("Err:",err)
-        });
-
-        dispatch(setOrder(response.data));
-      
+        const response = await getAllOrders();
+        dispatch(setOrder(response.data))
     };
 
     useEffect(() => {
