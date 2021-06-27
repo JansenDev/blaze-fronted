@@ -1,0 +1,42 @@
+.modalCap {
+  position: absolute;
+  background-color: rgba(112, 110, 110, 0.192);
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.myModalContainer {
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -50%);
+  width: 700px;
+  height: 400;
+}
+
+.myModal {
+  background-color: rgb(255, 255, 255);
+  height: 100%;
+  padding: 40px;
+  border-radius: 10px;
+  border: 1px solid rgba(22, 21, 21, 0.377);
+}
+
+.myModalContainer .close{
+    position: absolute;
+    border: 0px  !important;
+    top: 20px;
+    right: 20px;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    
+}
+
+.myModalContainer .close:hover{
+    cursor: pointer;
+    color: rgba(255, 0, 0, 0.815);
+}

@@ -1,10 +1,12 @@
+import './index.scss';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import reportWebVitals from './reportWebVitals';
+// !redux
 import { Provider } from "react-redux";
-import App from './App';
+// !locals 
 import  store  from "./redux/store";
+import App from './App';
 // import 'semantic-ui-css/semantic.min.css';
 
 ReactDOM.render(

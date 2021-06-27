@@ -113,6 +113,15 @@ function RenderModalInsertItem() {
     dispatch(setModalOrder(modalConfig));
   };
 
+  const btnCloseModal = ()=>{
+    const modalConfig = {
+      idItem: "",
+      opened: false,
+    };
+
+    dispatch(setModalOrder(modalConfig));
+  }
+
   const cleanModalFiles = () => {
     dispatch(setHandlerFormItem(orderItemTemplateFormat()));
   };
@@ -120,63 +129,70 @@ function RenderModalInsertItem() {
   return (
     <>
       {modalOpened && (
-        <div>
-          <form onSubmit={onSubmitOrderItem}>
-            <table className="table table-bordered mt-5">
-              <thead>
-                <tr className="text-center">
-                  <th colSpan="3">{modalManageType} Item</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td scope="row">Name</td>
-                  <td>
-                    <input
-                      name="name"
-                      className="form-control"
-                      type="text"
-                      value={handlerFormItem.name}
-                      placeholder="Name"
-                      onChange={handleChangeFormOrderItem}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td scope="row">Quantity</td>
-                  <td>
-                    <input
-                      name="quantity"
-                      className="form-control"
-                      type="number"
-                      value={handlerFormItem.quantity}
-                      placeholder="Quantity"
-                      onChange={handleChangeFormOrderItem}
-                      min="1"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td scope="row">Unit Price</td>
-                  <td>
-                    <input
-                      name="unit_price"
-                      className="form-control"
-                      type="text"
-                      value={handlerFormItem.unit_price}
-                      placeholder="Unit Price"
-                      onChange={handleChangeFormOrderItem}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div className="text-center">
-              <button className="btn btn-primary btn-block mb-5" type="submit">
-                Submit
-              </button>
-            </div>
-          </form>
+        <div className="modalCap">
+          <div className="myModalContainer">
+            <form className="myModal" onSubmit={onSubmitOrderItem}>
+              <table className="table table-borderless">
+                <thead>
+                  <tr className="text-center">
+                    <th className="h2" colSpan="3">
+                      {modalManageType} Item
+                    </th>
+                    <button onClick={()=>btnCloseModal()} type="button" class="close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td scope="row">Name</td>
+                    <td>
+                      <input
+                        name="name"
+                        className="form-control"
+                        type="text"
+                        value={handlerFormItem.name}
+                        placeholder="Name"
+                        onChange={handleChangeFormOrderItem}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td scope="row">Quantity</td>
+                    <td>
+                      <input
+                        name="quantity"
+                        className="form-control"
+                        type="number"
+                        value={handlerFormItem.quantity}
+                        placeholder="Quantity"
+                        onChange={handleChangeFormOrderItem}
+                        min="1"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td scope="row">Unit Price</td>
+                    <td>
+                      <input
+                        name="unit_price"
+                        className="form-control"
+                        type="text"
+                        value={handlerFormItem.unit_price}
+                        placeholder="Unit Price"
+                        onChange={handleChangeFormOrderItem}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div className="text-center">
+                <button className="btn btn-primary btn-block" type="submit">
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </>
