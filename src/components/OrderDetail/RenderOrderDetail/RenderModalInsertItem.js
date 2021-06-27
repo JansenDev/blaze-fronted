@@ -131,7 +131,7 @@ function RenderModalInsertItem() {
   return (
     <div>
       <form onSubmit={manageOrder}>
-        <table className="table table-bordered my-5">
+        <table className="table table-bordered mt-5">
           <thead>
             <tr className="text-center">
               <th colSpan="3">{modalManageType} Item</th>
@@ -183,9 +183,11 @@ function RenderModalInsertItem() {
             </tr>
           </tbody>
         </table>
-        <button className="btn btn-primary btn-block mb-5" type="submit">
-          Submit
-        </button>
+        <div className="text-center">
+          <button className="btn btn-primary btn-block mb-5" type="submit">
+            Submit
+          </button>
+        </div>
       </form>
     </div>
   );

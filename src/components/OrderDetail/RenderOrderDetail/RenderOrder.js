@@ -60,10 +60,10 @@ function RenderOrder() {
         <td>$ {unit_price}</td>
         <td>$ {priceOrderItem.toFixed(2)}</td>
         <td className="justify-content-evenly d-flex">
-          <a onClick={() => setModalEditOrderItem(name)} role="button">
+          <a className="text-info" onClick={() => setModalEditOrderItem(name)} role="button">
             Edit
           </a>
-          <a onClick={() => deleteOrderItem(name)} role="button">
+          <a className="text-danger" onClick={() => deleteOrderItem(name)} role="button">
             Delete
           </a>
         </td>
@@ -182,7 +182,7 @@ function RenderOrder() {
       <a
         name=""
         id=""
-        className="btn btn-primary float-lg-end"
+        className="btn btn-primary float-end"
         role="button"
         onClick={() => setModalAddOrderItem()}
       >
@@ -250,11 +250,11 @@ function RenderOrder() {
         </tbody>
       </table>
 
-      <div className="mb-5">
-        <a onClick={btnCompleteOrder} className="btn btn-success" role="button">
+      <div className="mb-5 float-end">
+        <a onClick={btnCompleteOrder} className="btn btn-success mx-1" role="button">
           Complete Order
         </a>
-        <a onClick={btnRejectOrder} className="btn btn-danger" role="button">
+        <a onClick={btnRejectOrder} className="btn btn-danger mx-1" role="button">
           Reject Order
         </a>
       </div>

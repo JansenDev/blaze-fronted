@@ -9,9 +9,8 @@ import  RenderOrder  from "./RenderOrderDetail/RenderOrder";
 function OrderDetail () {
   const  { idOrder }  = useParams();
   const dispatch = useDispatch();
-  console.log(idOrder);
 
-  // !get
+  // !segment get
   const getOrderById = async () => {
     const datos = await axios
       .get(`http://localhost:8080/orders/${idOrder}`)

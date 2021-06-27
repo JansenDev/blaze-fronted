@@ -1,6 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+// ! redux
+import { useSelector, useDispatch } from "react-redux";
+// ! Componenets
+import { createOrder } from "../../service/OrderService";
+// ! utils
+import  Swal  from "sweetalert2";
 
 function formatDate(date){
     return date.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
@@ -8,7 +13,7 @@ function formatDate(date){
 
 const OrderComponent = () => {
   const storeAllOrders = useSelector((state) => state.allOrders.orders);
-  console.log(storeAllOrders);
+  const dispatch = useDispatch();
   
   const renderOrderList = storeAllOrders.map((Order, index) => {
     const { order_number, status, date, customer, total_amount } = Order;
@@ -23,7 +28,7 @@ const OrderComponent = () => {
         <td>{ dateFormated }</td>
         <td> $ { total_amount.toFixed(2) }</td>
         <td className="justify-content-center d-flex">
-          <Link to={`/orders/${order_number}`} >
+          <Link className="text-info" to={`/orders/${order_number}`} >
             Edit
           </Link>
         </td>
@@ -31,11 +36,59 @@ const OrderComponent = () => {
     );
   });
 
+  const newOrderTemplate = {
+    status: "Pending",
+    customer: "",
+    taxes_amounts: {
+      city_tax: 0.1,
+      country_tax: 0.05,
+      state_tax: 0.08,
+      federal_tax: 0.02
+    },
+    taxes_total: 0.0,
+    total_amount:0.0,
+    listOrdersItems: []
+  }
+
+  const createNewOrder= ()=>{
+    console.log("New Order Create");
+    Swal.fire({
+      title: 'Create New Order',
+      input: 'text',
+      inputPlaceholder:"Customer name",
+      inputAttributes: {
+        autocapitalize: 'off'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Create!',
+      showLoaderOnConfirm: true,
+      preConfirm: (textImput) => {
+        newOrderTemplate.customer = textImput;
+        if(textImput == "" || textImput == " "){
+          // throw new Error("not does name customer");
+          return;
+        }
+        const newOrderCreated = createOrder(newOrderTemplate);
+        return newOrderCreated;
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+      console.log(result);
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: `Order created!`,
+        })
+        window.location.replace(window.location.href+`/${result.value.data.order_number}`);
+      }
+    })
+    .catch((err)=>console.log(err));
+  }
+
   return (
     <div>
       <div className="h2">Orders</div>
       <div>
-          <Link className="btn btn-primary float-end my-5" to="/createOrder" role="button">Create Order</Link>
+          <a onClick={createNewOrder}  className="btn btn-primary float-end my-5" role="button">Create Order</a>
       </div>
       <table className="table table-bordered ">
         <thead>
