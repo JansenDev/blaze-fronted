@@ -1,20 +1,15 @@
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 // * redux
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 // * Componenets
-import { createOrder, getAllOrders } from "../../service/OrderService";
+import { createOrder } from "../../service/OrderService";
 // * utils
 import  Swal  from "sweetalert2";
-import { setOrder } from "../../redux/actions/orderActions";
-
-function formatDate(date){
-    return date.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
-  }
+import { formatDate } from "../../utils/utils";
 
 const OrderComponent = () => {
   const storeAllOrders = useSelector((state) => state.allOrders.orders);
-  const dispatch = useDispatch();
 
   const renderOrderList = storeAllOrders.map((Order, index) => {
     const { order_number, status, date, customer, total_amount } = Order;

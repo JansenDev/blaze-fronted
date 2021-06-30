@@ -8,7 +8,7 @@ import { getAllOrders } from "../../service/OrderService";
 
 function Order() {
     const dispatch = useDispatch();
-    //!segment functionality
+
     const fetchAllOrders = async () => {
         const response = await getAllOrders();
         dispatch(setOrder(response.data))
@@ -17,7 +17,6 @@ function Order() {
     useEffect(() => {
         fetchAllOrders();
         return () => {
-            
         }
     }, [])
     return (

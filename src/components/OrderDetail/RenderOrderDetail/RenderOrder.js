@@ -66,7 +66,7 @@ function RenderOrder() {
     );
   });
 
-  const setModalEditOrderItem = async (nameItem) => {
+  const setModalEditOrderItem =  (nameItem) => {
     const modalConfig = {
       action:"Edit",
       idItem:nameItem,
@@ -79,7 +79,7 @@ function RenderOrder() {
     dispatch(setModalOrder(modalConfig));
   };
 
-  const setModalAddOrderItem = async () => {
+  const setModalAddOrderItem =  () => {
     const modalConfig = {
       action:"New",
       idItem:"",
@@ -91,7 +91,7 @@ function RenderOrder() {
       
       dispatch(setHandlerFormItem({
         name: "",
-        quantity: "",
+        quantity: 1,
         unit_price: "",
       }));
   };
@@ -110,7 +110,7 @@ function RenderOrder() {
       denyButtonText: `Delete`,
     }).then((result) => {
       if (result.isConfirmed) {
-        // Swal.fire('Saved!', '', 'success')
+        // Swal.fire('Order saved!', '', 'success')
       } else if (result.isDenied) {
         dispatch(setSelectOrder(orderById));
         updateOrder(orderById);

@@ -6,8 +6,6 @@ import Order from "../components/Order";
 import OrderDetail from "../components/OrderDetail";
 import Product from "../components/Product";
 import Home from "../Pages/Home";
-import CreateOrder from "../components/CreateOrder";
-
 
 const routes = [
     {
@@ -33,13 +31,7 @@ const routes = [
         component: Product,
         exact:true,
         layout: LayoutBasic
-    },
-    {
-        path:"/createOrder",
-        component: CreateOrder,
-        exact:true,
-        layout: LayoutBasic
-    },
+    }, 
     {
         component: Error404,
         layout: LayoutBasic

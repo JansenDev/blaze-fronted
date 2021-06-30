@@ -12,6 +12,7 @@ import { updateOrder } from "../../../service/OrderService";
 
 // *utils
 import Swal from "sweetalert2";
+import { map } from "lodash";
 
 function RenderModalInsertItem() {
   const dispatch = useDispatch();
@@ -21,10 +22,13 @@ function RenderModalInsertItem() {
   const idOrderItem = useSelector((state) => state.modalAction.idItem);
   const modalOpened = useSelector((state) => state.modalAction.opened);
   const handlerFormItem = useSelector((state) => state.modalHandler);
+  const allProducts = useSelector((state) => state.allProducts.products);
+  console.log(allProducts);
 
   // !functions
   const handleChangeFormOrderItem = async (e) => {
     e.preventDefault();
+    console.log(e.target.value);
 
     dispatch(
       setHandlerFormItem({
@@ -32,6 +36,15 @@ function RenderModalInsertItem() {
         [e.target.name]: e.target.value,
       })
     );
+    if (e.target.name == "name" && e.target.value != "") {
+      const priceProductSelected = allProducts.filter((product)=> product.name == e.target.value )[0];
+      console.log(priceProductSelected)
+      dispatch(
+        setHandlerFormItem({
+          unit_price: priceProductSelected.unit_price,
+        })
+      );
+    }
   };
 
   const insertNewOrderItem = async (e) => {
@@ -42,9 +55,15 @@ function RenderModalInsertItem() {
       handlerFormItem.quantity == "" ||
       handlerFormItem.unit_price == ""
     ) {
-      Swal.fire(swalAlertConfig());
+      Swal.fire(swalAlertConfig("Empty fields"));
       return;
     }
+
+    if(typeof(handlerFormItem.unit_price) === "string"){
+      Swal.fire(swalAlertConfig("Pick product again!"));
+      return;
+    }
+    
     for (let index = 0; index < listOrderItems.length; index++) {
       if (listOrderItems[index].name == handlerFormItem.name) {
         const itemNameDuplicated = handlerFormItem.name;
@@ -68,16 +87,14 @@ function RenderModalInsertItem() {
       handlerFormItem.quantity == "" ||
       handlerFormItem.unit_price == ""
     ) {
-      Swal.fire({
-        position: "center",
-        icon: "info",
-        title: "Empty fields",
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      Swal.fire(swalAlertConfig("Empty fields"));
       return;
     }
-
+    if(typeof(handlerFormItem.unit_price) === "string"){
+      Swal.fire(swalAlertConfig("Pick product again!"));
+      return;
+    }
+    console.log(typeof(handlerFormItem.unit_price) === "string");
     const itemsCleaned = duplicateItemClean(idOrderItem);
     itemsCleaned.push(handlerFormItem);
     formOrderBody.listOrdersItems = itemsCleaned;
@@ -96,12 +113,10 @@ function RenderModalInsertItem() {
   const onSubmitOrderItem = (e) => {
     e.preventDefault();
     if (modalManageType == "New") {
-      console.log("SUBMIT new");
       insertNewOrderItem(e);
     }
 
     if (modalManageType == "Edit") {
-      console.log("SUBMIT edit");
       editOrderItem(e, idOrderItem);
     }
 
@@ -113,18 +128,28 @@ function RenderModalInsertItem() {
     dispatch(setModalOrder(modalConfig));
   };
 
-  const btnCloseModal = ()=>{
+  const btnCloseModal = () => {
     const modalConfig = {
       idItem: "",
       opened: false,
     };
 
     dispatch(setModalOrder(modalConfig));
-  }
+  };
 
   const cleanModalFiles = () => {
     dispatch(setHandlerFormItem(orderItemTemplateFormat()));
   };
+
+  const renderComboBox = map(allProducts, (product, index) => {
+    if(product.active == "active"){
+      return (
+        <option key={index} value={product.name}>
+          {product.name}
+        </option>
+      );
+    }
+  });
 
   return (
     <>
@@ -138,23 +163,36 @@ function RenderModalInsertItem() {
                     <th className="h2" colSpan="3">
                       {modalManageType} Item
                     </th>
-                    <button onClick={()=>btnCloseModal()} type="button" class="close">
+                    <th
+                      onClick={() => btnCloseModal()}
+                      type="button"
+                      className="close text-muted"
+                    >
                       <span aria-hidden="true">&times;</span>
-                    </button>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td scope="row">Name</td>
                     <td>
-                      <input
+                      {/* <input
                         name="name"
                         className="form-control"
                         type="text"
                         value={handlerFormItem.name}
                         placeholder="Name"
                         onChange={handleChangeFormOrderItem}
-                      />
+                      /> */}
+                      <select
+                        className="form-select"
+                        aria-label="Default select example"
+                        onChange={handleChangeFormOrderItem}
+                        name="name"
+                      >
+                        <option value="">{handlerFormItem.name}</option>
+                        {renderComboBox}
+                      </select>
                     </td>
                   </tr>
                   <tr>
@@ -172,15 +210,16 @@ function RenderModalInsertItem() {
                     </td>
                   </tr>
                   <tr>
-                    <td scope="row">Unit Price</td>
+                    <td scope="row">Unit Price ($)</td>
                     <td>
                       <input
                         name="unit_price"
                         className="form-control"
                         type="text"
                         value={handlerFormItem.unit_price}
-                        placeholder="Unit Price"
+                        placeholder="0.00 "
                         onChange={handleChangeFormOrderItem}
+                        disabled
                       />
                     </td>
                   </tr>
@@ -188,7 +227,7 @@ function RenderModalInsertItem() {
               </table>
               <div className="text-center">
                 <button className="btn btn-primary btn-block" type="submit">
-                  Submit
+                  Save!
                 </button>
               </div>
             </form>
