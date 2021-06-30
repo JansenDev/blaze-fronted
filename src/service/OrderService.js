@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// !Create constants for url
 export const updateOrder = async (orderFormBody) => {
   const dataResponse = await axios({
     method: "put",
@@ -36,10 +37,11 @@ export const getOrderById = async(idOrder)=>{
 }
 
 export const getAllOrders = async() =>{
-    const allOrdersArray = await axios.get("http://localhost:8080/orders/")
+    const allOrders = await axios
+    .get("http://localhost:8080/orders/")
     .catch((err)=>{
         console.log("Err:",err)
     });
-    return allOrdersArray;
+    return allOrders;
 }
 

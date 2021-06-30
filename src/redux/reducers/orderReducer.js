@@ -37,7 +37,7 @@ export const selectedOrderReducer = (state = {}, { type, payload })=>{
   }
 } ;
 
-export const modalManageOrder=(state = modalInit, { type, payload } )=>{
+export const modalManageOrderReducer=(state = modalInit, { type, payload } )=>{
   switch (type) {
     case ActionTypes.MODAL_MANAGE_ORDER:
       return { ...state, ...payload }
@@ -47,7 +47,7 @@ export const modalManageOrder=(state = modalInit, { type, payload } )=>{
   }
 }
 
-export const handlerFormItem=(state = modalEditInit, { type, payload } )=>{
+export const handlerFormItemReducer=(state = modalEditInit, { type, payload } )=>{
   switch (type) {
     case ActionTypes.HANDLER_FORM_ITEM:
       return { ...state, ...payload }
